@@ -645,4 +645,199 @@ retrograde_ESS_plot <- ggboxplot(Df6, x = "Set", y = "ESS_Retro",
   theme_prism()
 
 
+####within50####
 
+Df7 <- read_excel("~/DAPTs.xlsx",
+                  sheet = "all50")
+View(Df7)
+
+
+Df7$Group <- as.factor(Df7$Group)
+Df7$Group <- ordered(Df7$Group,
+                     levels = c("Upper", "Lower",
+                                "Combined"))
+
+Df7$Set <- as.factor(Df7$Set)
+## Order conditions
+Df7$Set <- ordered(Df7$Set,
+                   levels = c("0", "1",
+                              "2","3"))
+
+
+
+Df7 <- Df7 %>%
+  mutate(Group_Set = interaction(Group, Set))
+
+# Post-hoc pairwise comparisons with Holm-Bonferroni correction
+pwc <- Df7 %>%
+  pairwise_t_test(
+    ESS_Ant ~ Group_Set,
+    paired = FALSE,
+    p.adjust.method = "holm"
+  )
+
+# Displaying the results in a table format
+pwc %>%
+  kbl(caption = "Pairwise Comparisons with Holm-Bonferroni Correction") %>%
+  kable_classic(full_width = FALSE, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Group")
+# Boxplot of ESS
+Antegrade_ESS <- ggboxplot(Df7, x = "Group", y = "ESS_Ant",
+                           color = "Set", palette = get_palette("Set1", 4),
+                           ylab = "Anterograde ESS (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
+
+Retro
+
+# Post-hoc pairwise comparisons with Holm-Bonferroni correction
+pwc <- Df7 %>%
+  pairwise_t_test(
+    ESS_Retro ~ Group_Set,
+    paired = FALSE,
+    p.adjust.method = "holm"
+  )
+
+# Displaying the results in a table format
+pwc %>%
+  kbl(caption = "Pairwise Comparisons with Holm-Bonferroni Correction") %>%
+  kable_classic(full_width = FALSE, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Group")
+# Boxplot of ESS
+ESS_Retro <- ggboxplot(Df7, x = "Group", y = "ESS_Retro",
+                           color = "Set", palette = get_palette("Set1", 4),
+                           ylab = "Retrograde ESS (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
+
+
+######Within80#####
+
+
+Df8 <- read_excel("~/DAPTs.xlsx",
+                  sheet = "all80")
+View(Df8)
+
+
+Df8$Group <- as.factor(Df8$Group)
+Df8$Group <- ordered(Df8$Group,
+                     levels = c("Upper", "Lower",
+                                "Combined"))
+
+Df8$Set <- as.factor(Df8$Set)
+## Order conditions
+Df8$Set <- ordered(Df8$Set,
+                   levels = c("0", "1",
+                              "2","3"))
+
+
+
+Df8 <- Df8 %>%
+  mutate(Group_Set = interaction(Group, Set))
+
+# Post-hoc pairwise comparisons with Holm-Bonferroni correction
+pwc <- Df8 %>%
+  pairwise_t_test(
+    ESS_Ant ~ Group_Set,
+    paired = FALSE,
+    p.adjust.method = "holm"
+  )
+
+# Displaying the results in a table format
+pwc %>%
+  kbl(caption = "Pairwise Comparisons with Holm-Bonferroni Correction") %>%
+  kable_classic(full_width = FALSE, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Set")
+# Boxplot of ESS
+Antegrade_ESS <- ggboxplot(Df8, x = "Group", y = "ESS_Ant",
+                           color = "Set", palette = get_palette("Set1", 4),
+                           ylab = "Anterograde ESS (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
+
+Retro
+
+# Post-hoc pairwise comparisons with Holm-Bonferroni correction
+pwc <- Df8 %>%
+  pairwise_t_test(
+    ESS_Retro ~ Group_Set,
+    paired = FALSE,
+    p.adjust.method = "holm"
+  )
+
+# Displaying the results in a table format
+pwc %>%
+  kbl(caption = "Pairwise Comparisons with Holm-Bonferroni Correction") %>%
+  kable_classic(full_width = FALSE, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Set")
+# Boxplot of ESS
+ESS_Retro <- ggboxplot(Df8, x = "Group", y = "ESS_Retro",
+                       color = "Set", palette = get_palette("Set1", 4),
+                       ylab = "Retrograde ESS (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
+
+
+######Alldata####
+Df9 <- read_excel("~/DAPTs.xlsx",
+                  sheet = "all")
+View(Df9)
+
+
+Df9$Group <- as.factor(Df9$Group)
+Df9$Group <- ordered(Df9$Group,
+                     levels = c("Upper", "Lower",
+                                "Combined"))
+
+Df9$Set <- as.factor(Df9$Set)
+## Order conditions
+Df9$Set <- ordered(Df9$Set,
+                   levels = c("0", "1",
+                              "2","3"))
+## Order conditions
+Df9$Percent <- ordered(Df9$Percent,
+                   levels = c("50", "80"))
+
+
+
+Df9 <- Df9 %>%
+  mutate(Group_Set = interaction(Group, Set))
+
+Df9 <- Df9 %>%
+  mutate(Group_Set_Percent = interaction(Group_Set, Percent))
+
+
+# Post-hoc pairwise comparisons with Holm-Bonferroni correction
+pwc <- Df9 %>%
+  pairwise_t_test(
+    ESS_Ant ~ Group_Set_Percent,
+    paired = FALSE,
+    p.adjust.method = "holm"
+  )
+
+# Displaying the results in a table format
+pwc %>%
+  kbl(caption = "Pairwise Comparisons with Holm-Bonferroni Correction") %>%
+  kable_classic(full_width = FALSE, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Set")
+# Boxplot of ESS
+Antegrade_ESS <- ggboxplot(Df9, x = "Group_Set_Percent", y = "ESS_Ant",
+                           color = "Set", palette = get_palette("Set1", 4),
+                           ylab = "Anterograde ESS (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
