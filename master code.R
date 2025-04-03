@@ -1,3 +1,4 @@
+#####Packages####
 library(readxl) ## To load excel sheet
 library(dplyr) # Data grammar and manipulation
 library(rstatix) # Shapiro Wilk and effect size
@@ -839,5 +840,92 @@ pwc <- pwc %>% add_xy_position(x = "Set")
 Antegrade_ESS <- ggboxplot(Df9, x = "Group_Set_Percent", y = "ESS_Ant",
                            color = "Set", palette = get_palette("Set1", 4),
                            ylab = "Anterograde ESS (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
+
+
+
+#####ONly3rdset####
+Df10 <- read_excel("~/DAPTs.xlsx",
+                  sheet = "only3")
+View(Df10)
+
+
+Df10$Condition <- as.factor(Df10$Condition)
+
+## Order conditions
+Df10$Condition <- ordered(Df10$Condition,
+                  levels = c("upper50", "lower50",
+                             "combined50","upper80", "lower80", "combined80"))
+
+###### Linear Mixed models ESS Antegrade
+lmModel = lmer(ESS_Ant ~ Condition + (1|Subject_ID),
+               data=Df10, REML=FALSE)
+summary(lmModel)
+
+# mixed model
+anova(lmModel)
+#test of the random effects in the model
+rand(lmModel)
+
+# Post-hoc pairwise comparisons Holms-Bonferroni correction
+pwc <- Df10 %>%
+  pairwise_t_test(ESS_Ant ~ Condition, paired = F,
+                  p.adjust.method	= "holm")
+pwc %>%
+  kbl(caption = "Effect Size") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+# Effect size Cohen's D with Hedge's g correction for small sample size
+Df10 %>% cohens_d(ESS_Ant ~ Condition,
+                 paired = F, hedges.correction = TRUE)%>%
+  kbl(caption = "Effect Size") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Condition")
+# Boxplot of ESS
+Antegrade_ESS_plot <- ggboxplot(Df10, x = "Condition", y = "ESS_Ant",
+                                color = "Condition", palette = get_palette("Set2", 7),
+                                ylab = "ESS Antegrade (dynes/cm2)") +
+  stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
+  theme_prism()
+#Save Plot
+ggsave("ESS_Antegrade.png")
+
+
+####retro
+###### Linear Mixed models ESS Antegrade
+lmModel = lmer(ESS_Retro ~ Condition + (1|Subject_ID),
+               data=Df10, REML=FALSE)
+summary(lmModel)
+
+# mixed model
+anova(lmModel)
+#test of the random effects in the model
+rand(lmModel)
+
+# Post-hoc pairwise comparisons Holms-Bonferroni correction
+pwc <- Df10 %>%
+  pairwise_t_test(ESS_Retro ~ Condition, paired = F,
+                  p.adjust.method	= "holm")
+pwc %>%
+  kbl(caption = "Effect Size") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+# Effect size Cohen's D with Hedge's g correction for small sample size
+Df10 %>% cohens_d(ESS_Retro ~ Condition,
+                 paired = F, hedges.correction = TRUE)%>%
+  kbl(caption = "Effect Size") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+#Plots
+# Add position for p values in boxplot
+pwc <- pwc %>% add_xy_position(x = "Condition")
+# Boxplot of ESS
+retrograde_ESS_plot <- ggboxplot(Df10, x = "Condition", y = "ESS_Retro",
+                                 color = "Condition", palette = get_palette("Set2", 6),
+                                 ylab = "ESS Retrograde (dynes/cm2)") +
   stat_pvalue_manual(pwc,size = 4.5,hide.ns = TRUE) +
   theme_prism()
